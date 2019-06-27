@@ -1,0 +1,71 @@
+{
+  "LEVELS": [
+    {},
+    {"title": "Preschool",                "points":  60,     "ppl": 1.00},
+    {"title": "Kindergarten",             "points":  65,     "ppl": 1.25},
+    {"title": "First Grade",              "points":  70,     "ppl": 1.50},
+    {"title": "Second Grade",             "points":  75,     "ppl": 1.75},
+    {"title": "Third Grade",              "points":  80,     "ppl": 2.00},
+
+    {"title": "Fourth Grade",             "points":  85,     "ppl": 2.25},
+    {"title": "Fifth Grade",              "points":  90,     "ppl": 2.50},
+    {"title": "Sixth Grade",              "points": 100,     "ppl": 2.75},
+    {"title": "Seventh Grade",            "points": 100,     "ppl": 3.00},
+    {"title": "Eighth Grade",             "points": 100,     "ppl": 3.25},
+
+    {"title": "High School (Freshman)",   "points": 100,     "ppl": 3.50},
+    {"title": "High School (Sophomore)",  "points": 100,     "ppl": 3.75},
+    {"title": "High School (Junior)",     "points": 100,     "ppl": 4.00},
+    {"title": "High School (Senior)",     "points": 100,     "ppl": 4.50},
+    {"title": "College (Freshman)",       "points": 100,     "ppl": 5.00},
+
+    {"title": "College (Sophomore)",      "points": 100,     "ppl": 5.50},
+    {"title": "College (Junior)",         "points": 100,     "ppl": 6.00},
+    {"title": "College (Senior)",         "points": 100,     "ppl": 6.50},
+    {"title": "Postgraduate (Master)",    "points": 100,     "ppl": 7.00},
+    {"title": "Postgraduate (Doctorate)", "points": 100,     "ppl": 7.50},
+
+    {"title": "Unnamed Level I",          "points": 150,     "ppl": 8.00},
+    {"title": "Unnamed Level II",         "points": 150,     "ppl": 9.00},
+    {"title": "Unnamed Level III",        "points": 150,     "ppl": 10.00},
+    {"title": "Unnamed Level IV",         "points": 150,     "ppl": 11.00},
+    {"title": "Unnamed Level V",          "points": 150,     "ppl": 12.00},
+    {"title": "Unnamed Level VI",         "points": 150,     "ppl": 13.00},
+    {"title": "Unnamed Level VII",        "points": 150,     "ppl": 14.00},
+    {"title": "Unnamed Level VIII",       "points": 150,     "ppl": 15.00},
+    {"title": "Unnamed Level IX",         "points": 150,     "ppl": 16.00}
+  ],
+  "SCORE_REF":                1000,
+  "MINIMUM_WORD_LENGTH":      3,
+  "MAXIMUM_WORD_LENGTH":      10,
+  "BULLY_MOVEMENT_LETTERS":   6,
+  "PLAYER_HEADSTART":         0.20,
+  "MAX_TILES":                {"bonus_word": 2, "bonus_super_word": 2},
+  "LONG_WORD_LEN":            7,
+  "SUPER_LONG_WORD_LEN":      9,
+  "HIGH_PPL":                 1,
+  "HIGH_PPL_MAX_LEN":         5,
+  "BULLY_SLOW_SPEED":         0.40,
+  "BULLY_SLOW_DURATION":      4,
+  "RULES_LEVELS": {
+    "word_bonus_tiles":       2,
+    "long_words_bonus_tile":  4,
+    "high_ppl_slow":          6
+  },
+  "BONUS_TILE_VALUE":         0.50,
+  "SUPER_BONUS_TILE_VALUE":   1.00,
+  "LETTER_POINTS": {
+    "E":1.00, "T":1.00, "A":1.00,
+    "O":1.25, "I":1.25, "N":1.25,
+    "S":1.50, "H":1.50, "R":1.50,
+    "D":2.00, "L":2.00,
+    "C":2.50, "U":2.50,
+    "M":3.00, "W":3.00, "F":3.00,
+    "G":3.50, "Y":3.50, "P":3.50,
+    "B":4.00,
+    "V":4.50, "K":4.50, "QU":4.50,
+    "J":5.00, "X":5.00, "Z":5.00
+  },
+
+  "RULES_VERSION":            1
+}

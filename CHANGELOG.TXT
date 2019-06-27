@@ -1,0 +1,160 @@
+2009-11-04:
+* Converted various vars to consts
+* Added and made use of new SCORE_REF const to avoid constant re-tuning of values
+* Removed score accessor on letters to make room for new tile_value system
+* Working on tile_value system but barely even started on the meat of the code
+* Redid letter distribution to be more like Scrabble
+* End-level bonus now gets rounding
+
+2009-11-05:
+* Decorations system is now built and works - no more ugly scores on tiles!
+* All fonts and child object offset data in Letter.as
+* Removed some unnecessary math
+* Killed a little dead code
+
+2009-11-10:
+* Working on letter images
+
+2009-11-11:
+* Killed all letter images, plan is now to do slicing of a single larger object
+* Working on Letter code to use a new LetterPNG lib image, slice it up, etc.  Lots still to do.
+* Removed DEPRESSED_FILTER, now used for out-of-play letters
+
+2009-11-11b:
+* Added in DEPRESSED_FILTER again, but it's different from the inactive filter
+* All logic for splicing images and randomly selecting a letter background is in
+
+2009-11-18:
+* Work on intro/tutorial animation
+* Moved some game begin logic to function so game doesn't auto-start on Game object's creation
+
+2009-11-23:
+* New menu object in the works
+* More work on intro/tutorial
+* Fixed width/height to be given from frame one rather than deduced from the stage
+* Finished end_game_cleanup
+
+2009-11-24:
+* Finished up menu code
+
+2009-11-30:
+* Added gzipped dictionary to svn repo for safety
+* Removed nerd message balloon and corresponding functions
+* Better message hint centralization (numbers which pull array data instead of flat strings)
+* Working on loading dictionary into memory
+* Added loader info to "intro" scene
+* Made menu look slightly less crappy
+
+2009-12-03:
+* Tried to get gzib stuff working in as3 - not so much luck
+* Slowly trying to replace dictionary class/methods with in-memory system
+* Added progress bar and better frames system for loader
+
+2009-12-07:
+* Finally got compression working - new ".gz" file is raw zlib data
+
+2009-12-08:
+* Menu broke - fixed it
+* Dictionary is fully set up and working now, converted to static class
+* Word score is now shown only on a valid word
+
+2009-12-11:
+* Comma-fied all score displays that hadn't already been
+* Starting on bonus tile animation
+* Minor reformatting of submission logic
+
+2009-12-15:
+* Bonus word tile done, including all associated animations
+* Framework for putting other bonus tiles down built - game logic not there yet for confuse and slow effects, though
+* Bonus word rule takes effect: levels 3+ give one bonus word tile each unless 3 are already on screen
+* Bonus word logic works: +50% per tile used (fixed bug with int when Number was proper type)
+* Various unnecessary trace() calls removed
+* Initializing letter default data now more centralized (and sensible)
+* Letter.destroy() now safer
+* Game data init is now safer for when a game ends and user starts a new one
+
+2009-12-16:
+* Bonus Info screen now working, displays info about bonus-word tile
+* Changed level for bonus-word tile from 3 to 2
+
+2009-12-?? - 2010-01-06:
+* Minor todo.txt fixes
+* Made constants actual consts rather than vars
+* Major reworking of bonus tile code / rules
+  * Letter object now only has option for bonus word and bonus super word tiles - +50% and +100% word bonus
+  * Slow is no longer tile, but immediate "status" effect that lasts a few turns
+  * Rule info is now alerted to player
+* More work making Game re-instantiable
+* More helper functions to avoid code duplication
+
+2010-01-09:
+* Bonus tiles fully done - related entries removed from to-do
+* Bonus tile award returns true or false now so bonus code can handle when there are too many of a given tile
+
+2010-01-10:
+* Modified publish settings to hopefully publish smaller code (removing trace)
+* Using new PRNG class for letter randomness
+* Redid to-do section on anti-cheat code
+
+2010-02-01
+* Fixed main menu to be slightly more reusable and slightly less ugly
+* Minor changes to todo.txt
+
+2010-02-02
+* Fixed double-click issue
+* End game screen started
+* Fixed bug with ending a game and starting a new one
+
+2010-02-03
+* New in-progress Stats class to store per-level and per-game stats, such as longest word, distance run, etc
+* Game class partially using Stats class
+* Fixed EndGame to fade in and out instead of just show up and disappear
+* Minor fixes to MainMenu
+
+2010-02-04
+* EndLevel takes and uses stats object
+* Stats class finished
+* EndGame class now builds dynamic text objects
+* Fixed constructor of EndGame so it can be placed on a stage
+* EndGame takes and uses stats object
+* Game class now uses per-level and per-game stats objects properly
+* New method to convert score to meters
+
+2010-02-05
+* Major rearrangement of todo.txt to better reflect current goals, r1 goals, and sticker setup
+* Fixed bug with last_click_frame storing value from previous game (making tiles not clickable for a long time)
+* Removed word list (stats may eventually store that data, but nothing needs it now)
+* Removed unnecessary re-creation of letter generator each level
+* EndGame is complete and working!  Shows lots of stats, shows them properly, no errors, no text funk.
+
+2010-02-06
+* Added word list to Stats so game server can store this even in r1 for later audits
+* Added examples for using FBJS.
+* Broke up FB to-do into more specific pieces
+
+2010-03-01
+* Added HTML and JS to run app
+* Various file additions, edits, etc. working on FB files needed
+
+2010-03-04
+* Fixes to deploy script
+* PHP and such for FB and regular app
+* Figured out FB XFBML finally (FB.init!)
+* Redid todo.txt: most anti-cheat code works with code to deal with stickers/grades, and both should be done at once
+* New local deploy script for dev work directly in nb.com's "projects" area
+
+2010-03-07
+* More efficient deploy.sh
+* Major rewrite to todo doc to more granularly define all pieces left to do
+* Starting on getting PHP to really do all the necessary work for building DB records for games, etc
+
+2010-03-08
+* New rules singleton for centralizing json-based rules
+* Started migrating rules into rules.json - Game.as should be ready
+
+2010-03-09
+* JSON fixed to be properly-formed (quotes around keys)
+* Flash app now loads rules from external JSON resource
+* Game.as issues fixed after moving rules to JSON
+* Moved some rules in Letter.as, documented others that eventually need to move
+* Moved *most* non-essential PRNG use to Math.rand instead - we can only use PRNG for stuff that can be replayed

@@ -1,0 +1,186 @@
+"Run, Nerd!" TODO:
+==================
+
+Right now
+---------
+
+o Get PRNG out of ArrayHelper.as - create special code for shuffling an array specific to Run, Nerd! so we
+  are guaranteed to be able to repeat any game.  (For instance, randomizing timers and other UI elements is bad bad bad)
+  Calling a.random() to get a random element from an array shouldn't have the side-effect of messing up client's random
+  sequence.
+  o Use new internal-scramble for Game.as (shuffling cloned letter array for bonus tiles) as well as LetterGenerator.as
+o Store rules info in JSON files on server - values of letters, multiplier, bully movement, etc.  Need this
+  central so server and client both compute the game the same.
+  o Move rules for "ring" multiplier (outer = 1x, middle ring = 1.5x, center = 2x) to json
+  o Move rules for per-click multiplier in Letter.as into json
+  o Change floats to ints as much as possible to avoid rules being less platform-independent - for instance, increase_score()
+    could get tricky pretty fast.  Maybe store # of increases rather than constantly changing score, and compute
+    "current" score in a separate function that just gives a set boost per click or something....
+  o Continue moving rules into rules.json
+    x Test that movement of Game.as rules is working
+  o Old rules need a date on them - games store their start date, so it's easy to see which rules were in use
+  x Move bonus tile values into rules rather than hard-coded
+  x Make flash app load rules at the same time as dictionary using new Rules class
+o Fix "slow bully" rule - make it 3-letters only, but a score of 10k or something.  Mention bonus tiles don't
+  work for this rule to trigger.  As it is now, it's too confusing to explain, and to hard to know when you get it.
+o Work up a detailed manual - ugly or not, data needs to be written down (for instance, need to know that
+  you don't have to complete a game to get stickers or game-based grades, but do need to to get lifetime-based grades)
+o Fix schema to support storing game state in addition to command lists, and store finished or still playing.
+o Add cron job to purge all games with score of 0 once they've had no activity for 24 hours - all other games purged
+  after no activity for 120 hours.  Games that have finished are purged after 90 days.
+o Add new user_profile table for storing various stats for players - their highest scoring game, games played, letters
+  used, etc.
+o Build PHP classes for dealing with game replay and store/retrieve game state
+o Begin level rule help:
+  o First level could just point out basics in a 4-step tutorial-like approach, but with skip option
+o FB integration stuff
+  o Create game_profile data on index.php hit:
+    o Create record in game_profile with fb id, start date, last activity, score of 0, level 1, command_list of "S" (start), rules version hard-coded
+    o Get game id returned from mysql, use this combined with user id and current system time to generate a seed
+    o In flash params, send seed, uid, and game id
+  o Finish setting up FB profile for the game - maybe set up a dummy game under a different name for beta testing?
+  o Use PHP + XFBML + (new Flash app?  JS?) to pull friends list, and make hoverable photos that show friend report cards.
+  o Learn http://wiki.developers.facebook.com/index.php/Facebook.streamPublish - use Flash to call JS functions that
+    will publish the various wall alerts (use typing maniac's JS to help here)
+  o Learn http://wiki.developers.facebook.com/index.php/Dashboard_API to publish to games dashboard
+  o Add "Invite friends" and "View friends' report cards" to main menu - both call out to JS functions to build
+    iframes over the app.  Typing Maniac "invites.js" may help here (at least for invites, maybe general iframe stuff, too).
+  o Each level submit (and end-game submit):
+    o Submission would contain user id, game id, score, command array
+    o Get last game's state (score, level, current seed, bonus tiles, slow counter) from table
+    o Run new commands, verify each word, verify they reach new level, verify same score as submitted
+      o May need to use a lib that's pre-loaded with all words in a hash so PHP isn't reading a huge file every hit -
+        not sure if this stays cached by mod_php, though
+    o Store new game state
+    o Look for new stickers to alert user - if found, update user profile and put JSON in return to tell Flash app.
+    o Look for grade changes for game-context stats - if found, update user profile, return JSON.
+    o If game is over:
+      o Update user profile with lifetime stats, check for new grades here, alert user w/JSON if any - wall message for new grades (showing rank among friends, as well)
+      o If no new grades, see if player's game score ranks higher than previous score compared to current friends list - wall message for moving up
+      o If user didn't move up any, but has personal best score, wall message for game and current standing
+      o No?  Just show "$player scored $score points in (his/her) Xth game of 'Run, Nerd!'" etc
+    o Create game action queue class, storing seed, uid, rules version, gameid, and each (useful) click
+      o Store text - base 36 or something should be more than enough:
+        o 0 = game start
+        o 1-25 = tile chosen
+        o 26 = word submitted
+        o 27 = scramble clicked
+        o 28 = game over
+      o Even a huge level shouldn't end up sending more than a few k to the server
+      o (LOOK INTO) Could allow stats class to be specifically just for simple in-game stats, since this data would be more
+        than enough to figure out tiles used, words used, etc. for stickers and grades.
+      o (future) Could use this to add a replay mode to view other people's games!
+
+Before final release
+--------------------
+
+* Close button that ends game (no score submit), takes you back to main menu.  Must have confirm menu for this!
+  * Retool MainMenu to be more generic, allow caption, etc?
+* Ads - http://www.mochimedia.com/developers/ads.html
+  * Freeze game after end level animation is done ("continue" clicked), jumping to ad every level (API only lets you
+    do an ad every few minutes, so fast level completions won't be terribly annoying)
+  * Check NB database for exemptions - have to store users and scores anyway, so may as well have a profile of some kind
+  * Pay $X for lifetime ad removal (No more than $5 - though wait on ad statistics to figure this out - may well be
+    worth just offering a $1 deal, even, especially if the game gets a lot of interest)
+    * Eventually offer some deal for lifetime removal of ads on all NB games
+* Music?
+  * Option (and icons) to disable
+* Sounds - letters dropping, being clicked or unclicked, word completed, nerd winning level, nerd losing, awarding
+  special tiles
+  * Option (and icons) to disable
+* Code obfuscation?
+
+
+Achievement info (first release still)
+--------------------------------------
+
+* Grades and stickers (achievements):
+  * Build "report card" that shows all stickers and grades, and what is required for each non-hidden item
+  * Letter grades:
+    * These are "simple".  Not easy per se (though some are), but rules are basic and rewards are tiered - everybody
+      who plays should easily hit tier 1 ("D").
+    * These give letter grades for player in some category.  Everybody starts at "F".  First tier gives a "D", second
+      a "C", third a "B", fourth an "A".
+    * Game context - these conditions must be met in a single game
+      * X tiles used:                       50        125       250       500
+      * X words built:                      10        25        50        100
+      * Reached score X:                    100,000   250,000   500,000   1,500,000
+      * X points for a single word:         20,000    50,000    100,000   150,000
+    * Lifetime context - these conditions are cumulative (anybody who plays enough will get these)
+      * X games completed:                  2         5         25        100
+      * X tiles used:                       1,000     5,000     10,000    50,000
+      * X words built:                      200       500       1,000     2,500
+      * X meters run:                       7k        15k       40k       100k
+  * Stickers - one sticker per achievement, should be harder to do than letter grades
+    * Long words:                           Build at least one of each in one game: 7- and 8-letter words
+    * Longer words:                         Build at least one of each in one game: 7-, 8-, 9-, and 10-letter
+    * Short words:                          Finish a single level using only 3- and 4-letter words
+    * Shorter words:                        Finish a single level using only 3-letter words
+    * High School:                          Beat level 10
+    * College:                              Beat level 14
+    * Postgrad:                             Beat level 18
+    * Wordsmith:                            Submit a word worth 5,000 *base* PPL
+    * Wordwhizzurd:                         Submit a word worth 10,000 *base* PPL
+    * Close call:                           Win a level without ever submitting a word worth more points than bully's movement
+    * Homerun:                              Beat level 10 without ever seeing anything but B-) and :-D
+  * Hidden - these are all meant to be truly tough or at least counter to normal play.
+    ABSOLUTELY no hints about how you get these (names should be pretty vague, too, for posting to wall).  If
+    possible, send data backing these to server and let it send back achievements so you can't even reverse the code.
+    * Proud supporter:    Pay me money to remove ads
+    * Born Loser:         Lose on level 1, but only after getting 90% or closer to library.
+    * Born Winner:        Beat level 1 with a single word.
+    * Short But Sweet:    Get up to High School (levels 1-10 completed) using only 3-, 4-, and 5-letter words
+    * Linguist:           Get up to High School using only 6-letter words and longer
+    * FOO:                Use 8 or more letters in a single word without using the inner ring or middle
+    * BAR:                Use all nine middle letters, no outer
+    * Overkill:           Beat level 5 or higher with a level score of X higher than the required amount - must carefully get up near library and then build a huge word, very counter-intuitive
+    * Silly Hacker:       Cheat score to a "believable" value (compare to max based on score ref, level, and "perfect" bonus), but get caught by seed validation code on server side
+    * Get off my lawn!:   Cheat score to maximum possible - 1.  That is, for given level, maximum = max of previous levels + current level's max without bonus - 1.  Just barely missed library.
+    * WTF?!?:             Scramble score down to zero when level is 5 or higher
+    * Seriously, WTF?!?:  Scramble letters when the board has at least one double-word bonus, and at least one regular word bonus
+
+
+SHORT-TERM FUTURE
+-----------------
+
+* Move as much of the bully logic into on_enter_frame as possible to allow for a timer mode with little change
+* (TODO in code) Allow letter "zap" to remove a letter, but "charge" user some amount of his total points.
+* Hints
+  * Using lots of letters without a lot of points (~15 points per letter?)
+  * Quick intro animation if player requests it (or even check flash cookie?) "Click a letter to add to word, each ring has more points, outer ring gives inner & center bonuses; inner gives center bonus, but can't go to outer from inner, can't go anywhere from center"
+  * First attempt to click a letter further out than allowed
+* Letter tile filter for disabled tiles (after going in, you can't choose higher-level tiles) - just turn B&W, disable
+  * DON'T change chosen tiles - they should still stand out
+  * On click of inner ring, fire off event to disable outer ring - on center, disable outer and inner
+  * Keep same code in place that doesn't let clicking add a letter if it's invalid - just in case disable code doesn't
+    work or is too easily hacked or something.
+* Allow a user to start at any level they've *beaten*, giving them whatever their best score was with a small (5-10%)
+  penalty - quick start but no free ride to super high score
+  * Would need to hit server each time level ends
+
+
+LONG-TERM FUTURE
+----------------
+
+* Use stored game state info to allow continuing a broken game.
+  * Use user id and drop game id - no need since we'd be able to resume a broken game.
+  * Give flash game ability to silently play through a game - at this same time, a player could be built.
+  * Add pings to game to easily detect when player is dropped.
+  * Disallow same player playing two games for obvious reasons....
+  * Probably no need to purge dead games at this point.
+* Add timed mode?  If timer exists on flash and backend, it would be hard to cheat - if the two timers are out of sync, game records
+  possible cheat and allows banning players.
+  * "Run, Nerd! -- Frenzy" - entirely new game?
+    * Bully moves slowly at first, speeding up as time passes.  Nerd moves as usual.
+  * This would be a separate mode - Normal = play leisurely, Frenzy = not so much
+* Allow typing in letters - game finds optimal path to entered word, backspace just pops one letter off stack, etc.
+  May not be necessary for initial launch, but a timed mode would really need this.
+* Add in two wildcards like real scrabble?  No points, but allows a regex lookup ("Su.day" would work since "Sunday" is a word)
+* Make out-of-play letters in some kind of overlay so it's more clear what they are
+* Fix code so out-of-play letter row's +/-2 isn't hardcoded
+* Kid mode - no bully, just running through levels.
+  * Bully at half speed instead?
+* Gauntlet mode - timed mode with no levels - just a constantly changing indicator of distance from bully.  "Nightmare" mode
+  since you're running forever.
+* Tournament mode - allow set game boards for tourney play (set random seeds) - to avoid cheating, do a ton of server-side stuff?
+  Ensure timing and such.
